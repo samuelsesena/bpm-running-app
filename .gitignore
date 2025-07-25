@@ -28,3 +28,26 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+
+# Environment and token files
+.env
+spotify_token.json
+
+# Node
+node_modules/
+
+# Vue/Vite build
+dist/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE (optional, if using VS Code)
+.vscode/
