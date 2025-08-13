@@ -33,3 +33,5 @@ npm run build
 ```sh
 npm run lint
 ```
+
+# This project uses the web api from https://getsongbpm.com/
