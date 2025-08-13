@@ -10,6 +10,7 @@ load_dotenv()  # loads variables from .env into environment
 
 CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+BPM_KEY = os.getenv("BPM_KEY")
 TOKEN_FILE_PATH = "spotify_token.json"
 
 
@@ -78,6 +79,30 @@ def get_token():
         print(f"Response Body: Token is still valid! {token_info}")
     return token_info
 
+@app.route("/playlist")
+def grab_playlist_info():
+    try:
+        playlist_id = "6u3D6UiOmbGnQWMnLo713A"
+        spotify_playlist_api = f"https://api.spotify.com/v1/playlists/{playlist_id}"
+
+        spotify_token = get_token()
+        params = {
+            "fields" : "tracks.items(track(name,href,album(artists,name,href,images)))"
+        }
+        headers ={
+            "Authorization": f"{spotify_token["token_type"]} {spotify_token["access_token"]}"
+        }
+
+        response = requests.get(spotify_playlist_api, headers=headers, params=params)
+        response.raise_for_status()
+
+        res_data = response.json()
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Body: {res_data}")
+        return jsonify(res_data)
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/artist")
 def grab_artist_info():
@@ -91,6 +116,28 @@ def grab_artist_info():
         }
 
         response = requests.get(spotify_artist_api, headers=headers)
+        response.raise_for_status()
+
+        res_data = response.json()
+        print(f"Status Code: {response.status_code}")
+        print(f"Response Body: {res_data}")
+        return jsonify(res_data)
+
+    except requests.exceptions.RequestException as e:
+        return jsonify({"error": str(e)}), 500
+    
+@app.route("/song-bpm")
+def grab_song_bpm():
+    try:
+        song_id = "16D5bGymrzpi9ZlnYXB5ql"
+        bpm_song_api = f"https://api.getsong.co/song/"
+
+        params = {
+            "api_key": BPM_KEY,
+            "id": song_id
+        }
+
+        response = requests.get(bpm_song_api, params=params)
         response.raise_for_status()
 
         res_data = response.json()
